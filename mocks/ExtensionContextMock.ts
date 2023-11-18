@@ -1,27 +1,61 @@
-export const ExtensionContextMock = function () {
-  this.globalState = {};
+import {
+  Extension,
+  ExtensionContext,
+  ExtensionMode,
+  GlobalEnvironmentVariableCollection,
+  Memento,
+  SecretStorage,
+  Uri,
+} from 'vscode';
 
-  // Get the cached item
-  this.globalState.get = function (key, defaultValue): undefined {
-    // If key does not exist
-    if (typeof this[key] === 'undefined') {
+export class ExtensionContextMock implements ExtensionContext {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  subscriptions: { dispose(): any }[];
+  workspaceState: Memento;
+  secrets: SecretStorage;
+  extensionUri: Uri;
+  extensionPath: string;
+  environmentVariableCollection: GlobalEnvironmentVariableCollection;
+  storageUri: Uri;
+  storagePath: string;
+  globalStorageUri: Uri;
+  globalStoragePath: string;
+  logUri: Uri;
+  logPath: string;
+  extensionMode: ExtensionMode;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  extension: Extension<any>;
+
+  globalState;
+
+  constructor() {
+    this.globalState = {};
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  asAbsolutePath(relativePath: string): string {
+    throw new Error('Method not implemented.');
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  get(key: string, defaultValue?: any): undefined | any {
+    if (this.globalState[key] === undefined) {
       // If default value is provided
-      if (typeof defaultValue !== 'undefined') {
+      if (defaultValue !== undefined) {
         return defaultValue;
       } else {
         return undefined;
       }
     } else {
-      return this[key];
+      return this.globalState[key];
     }
-  };
+  }
 
-  // Update a cached item
-  this.globalState.update = function (key, value) {
-    this[key] = value;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  update(key: string, value: any): Thenable<any> {
+    this.globalState[key] = value;
 
     return new Promise((resolve) => {
-      resolve(true);
+      resolve(this.globalState[key]);
     });
-  };
-};
+  }
+}

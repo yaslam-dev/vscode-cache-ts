@@ -1,5 +1,5 @@
 {
-  "name": "node-typescript-boilerplate",
+  "name": "vscode-cache-ts",
   "version": "0.0.0",
   "description": "Minimalistic boilerplate to quick-start Node.js development in TypeScript.",
   "type": "module",
@@ -12,7 +12,6 @@
     "@types/vscode": "^1.84.1",
     "@typescript-eslint/eslint-plugin": "~6.2",
     "@typescript-eslint/parser": "~6.2",
-    "bluebird": "^3.7.2",
     "eslint": "~8.46",
     "eslint-config-prettier": "~9.0",
     "eslint-plugin-jest": "~27.2",
@@ -33,9 +32,9 @@
     "lint": "eslint . --ext .ts --ext .mts",
     "test": "jest --randomize --coverage",
     "prettier": "prettier --config .prettierrc --write .",
-    "test:watch": "jest --clearCache --watch"
+    "test:watch": "jest --watch"
   },
-  "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
+  "author": "Yasir Aslam <Yasir900aslam@gmail.com>",
   "license": "Apache-2.0",
   "dependencies": {
     "tslib": "~2.6"
