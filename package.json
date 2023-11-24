@@ -3,8 +3,10 @@
   "version": "0.0.0",
   "description": "Minimalistic boilerplate to quick-start Node.js development in TypeScript.",
   "type": "module",
+  "main": "./build/src/main.js",
+  "types": "./lib/main.d.ts",
   "engines": {
-    "node": ">= 18.12 <19"
+    "node": ">= 18.12"
   },
   "devDependencies": {
     "@types/jest": "~29.5",
@@ -20,6 +22,7 @@
     "rimraf": "~5.0",
     "ts-api-utils": "~1.0",
     "ts-jest": "~29.1",
+    "tslib": "~2.6",
     "typescript": "~5.1"
   },
   "scripts": {
@@ -35,11 +38,5 @@
     "test:watch": "jest --watch"
   },
   "author": "Yasir Aslam <Yasir900aslam@gmail.com>",
-  "license": "Apache-2.0",
-  "dependencies": {
-    "tslib": "~2.6"
-  },
-  "volta": {
-    "node": "18.12.1"
-  }
+  "license": "Apache-2.0"
 }

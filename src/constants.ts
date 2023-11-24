@@ -1,0 +1,1 @@
+export const DEFAULT_EXPIRATION_TIME = 1000;

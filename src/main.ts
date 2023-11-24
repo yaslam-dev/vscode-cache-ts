@@ -1,21 +1,34 @@
 import { ExtensionContext } from 'vscode';
+import { now } from './utils';
+
+interface CacheRecordItem<T> {
+  value?: T;
+  expiration?: number;
+}
+
+type CacheRecord<T> = Record<string, CacheRecordItem<T>>;
 
 export class Cache<T> {
   private context: ExtensionContext;
 
-  private cache: {
-    [key: string]: {
-      value: T;
-      expiration?: number;
-    };
-  };
+  private cache: CacheRecord<T>;
 
   private namespace: string;
 
   constructor(context: ExtensionContext, namespace?: string) {
     this.context = context;
     this.namespace = namespace || 'cache';
-    this.cache = this.context.globalState.get(this.namespace, {});
+
+    const defaultValue: CacheRecordItem<T> = {
+      value: undefined,
+    };
+
+    const currentContextValue = this.context.globalState.get(
+      this.namespace,
+      defaultValue,
+    );
+
+    this.cache = { [this.namespace]: currentContextValue };
   }
 
   public put(key: string, value: T, expiration?: number): Thenable<void> {
@@ -28,7 +41,7 @@ export class Cache<T> {
 
     // Set expiration
     if (expiration && Number.isInteger(expiration)) {
-      obj.expiration = this.now() + expiration;
+      obj.expiration = now() + expiration;
     }
 
     // Save to local cache object
@@ -44,7 +57,8 @@ export class Cache<T> {
     }
 
     // Delete from local object
-    delete this.cache[key];
+    this.cache[key].value = undefined as T;
+    this.cache[key].expiration = 0;
 
     // Update the extension's globalState
     return this.context.globalState.update(this.namespace, this.cache);
@@ -59,7 +73,8 @@ export class Cache<T> {
   }
 
   public has(key: string): boolean {
-    if (this.cache[key] === undefined || this.isExpired(key)) {
+    const value = this.cache[key].value;
+    if (value === undefined || this.isExpired(key)) {
       return false;
     }
     return true;
@@ -69,9 +84,7 @@ export class Cache<T> {
     return Object.keys(this.cache);
   }
 
-  public all(): {
-    [key: string]: T;
-  } {
+  public all(): Record<string, T> {
     const items = {};
     for (const key in this.cache) {
       items[key] = this.cache[key].value;
@@ -86,14 +99,14 @@ export class Cache<T> {
 
   public isExpired(key: string): boolean {
     // If key doesn't exist or it has no expiration
-    if (
-      this.cache[key] === undefined ||
-      this.cache[key].expiration === undefined
-    ) {
+
+    const value = this.cache[key].value;
+    const expiration = this.cache[key].expiration;
+    if (!value || !expiration) {
       return false;
     }
     // Is expiration >= right now?
-    return this.now() >= this.cache[key].expiration;
+    return now() >= expiration;
   }
 
   public getExpiration(key: string): undefined | number {
@@ -106,9 +119,5 @@ export class Cache<T> {
 
   public getNamespace(): string {
     return this.namespace;
-  }
-
-  private now(): number {
-    return Math.floor(Date.now() / 1000);
   }
 }

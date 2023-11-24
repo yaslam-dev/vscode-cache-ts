@@ -8,6 +8,48 @@ import {
   Uri,
 } from 'vscode';
 
+interface GlobalStateMememto extends Memento {
+  setKeysForSync(keys: readonly string[]): void;
+}
+
+class globalStateMememto<T> implements GlobalStateMememto {
+  globalState: Record<string, T>;
+
+  constructor() {
+    this.globalState = {};
+  }
+
+  keys(): readonly string[] {
+    return Object.keys(this.globalState);
+  }
+
+  get<T>(key: string, defaultValue?: T) {
+    if (this.globalState[key] === undefined) {
+      // If default value is provided
+      if (defaultValue !== undefined) {
+        return defaultValue;
+      } else {
+        return undefined;
+      }
+    } else {
+      return this.globalState[key];
+    }
+  }
+
+  update(key: string, value: T): Thenable<void> {
+    this.globalState[key] = value;
+
+    return new Promise((resolve) => {
+      resolve();
+    });
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  setKeysForSync(_keys: readonly string[]): void {
+    throw new Error('Method not implemented.');
+  }
+}
+
 export class ExtensionContextMock implements ExtensionContext {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   subscriptions: { dispose(): any }[];
@@ -26,36 +68,15 @@ export class ExtensionContextMock implements ExtensionContext {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   extension: Extension<any>;
 
-  globalState;
+  globalState: Memento & {
+    setKeysForSync(keys: readonly string[]): void;
+  };
 
   constructor() {
-    this.globalState = {};
+    this.globalState = new globalStateMememto();
   }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  asAbsolutePath(relativePath: string): string {
+  asAbsolutePath(_relativePath: string): string {
     throw new Error('Method not implemented.');
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  get(key: string, defaultValue?: any): undefined | any {
-    if (this.globalState[key] === undefined) {
-      // If default value is provided
-      if (defaultValue !== undefined) {
-        return defaultValue;
-      } else {
-        return undefined;
-      }
-    } else {
-      return this.globalState[key];
-    }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  update(key: string, value: any): Thenable<any> {
-    this.globalState[key] = value;
-
-    return new Promise((resolve) => {
-      resolve(this.globalState[key]);
-    });
   }
 }
