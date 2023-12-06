@@ -1,4 +1,8 @@
 .editorconfig
+.eslintignore
+.gitignore
+.prettierrc
+jest.config.js
 .eslintrc.json
 index.html
 lib
