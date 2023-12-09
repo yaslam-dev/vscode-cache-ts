@@ -1,6 +1,6 @@
 # Blazing Fast vscode cache
 
-_`vscode-cache-ts` is a typed abstraction of the [VSCode API](https://code.visualstudio.com/api/references/vscode-api#Memento) `ExtensionContext.globalState` interface._
+_[vscode-cache-ts](https://github.com/yaslam-dev/vscode-cache-ts) is a typed abstraction of the [VSCode API](https://code.visualstudio.com/api/references/vscode-api#Memento) `ExtensionContext.globalState` interface._
 
 ## Installation
 
